@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.map
  * Adapts an [InteractionSource] from one component to another by mapping any interactions by a
  * given offset. Namely used for the pill indicator in [NavigationBarItem] and [NavigationRailItem].
  */
-internal class MappedInteractionSource(
+class MappedInteractionSource internal constructor(
     underlyingInteractionSource: InteractionSource,
     private val delta: Offset
 ) : InteractionSource {
