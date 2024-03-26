@@ -35,6 +35,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                         NavigationBar {
+
                             NavigationBarItem(
                                 selected = true,
                                 onClick = { /*TODO*/ },
@@ -55,9 +56,6 @@ class MainActivity : ComponentActivity() {
                                         contentDescription = null
                                     )
                                 },
-                                label = {
-                                    Text(text = "Home")
-                                }
                             )
 
                             NavigationBarItem(

@@ -24,10 +24,12 @@ import com.yveskalume.openmaterial.tokens.FilledButtonTokens
  *
  * Shadow elevation is used to apply a shadow around the button to give it higher emphasis.
  *
- * See [tonalElevation] which controls the elevation with a color shift to the surface.
+ * See [androidx.compose.material3.ButtonElevation.tonalElevation] which controls the elevation with a color shift to the surface.
  *
  * @param enabled whether the button is enabled
  * @param interactionSource the [InteractionSource] for this button
+ *
+ * Cfr [androidx.compose.material3.ButtonElevation.shadowElevation]
  */
 @Composable
 internal fun ButtonElevation.shadowElevation(
@@ -37,6 +39,9 @@ internal fun ButtonElevation.shadowElevation(
     return animateElevation(enabled = enabled, interactionSource = interactionSource)
 }
 
+/**
+ * Cfr [androidx.compose.material3.ButtonElevation.animateElevation]
+ */
 @Composable
 private fun ButtonElevation.animateElevation(
     enabled: Boolean,

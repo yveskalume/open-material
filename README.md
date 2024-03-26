@@ -147,37 +147,6 @@ Here's the key: by keeping the class open, you gain the flexibility to customize
 The idea is to be able to override the Button or some of it properties (e.g : minHeight) or even a
 part of it (e.g : ProvideContentColorTextStyle).
 
-And we can then just create a `Button` composable and call our component like this :
-
-```Kotlin
-@Composable
-fun Button(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    shape: Shape = ButtonDefaults.shape,
-    colors: ButtonColors = ButtonDefaults.buttonColors(),
-    elevation: ButtonElevation? = ButtonDefaults.buttonElevation(),
-    border: BorderStroke? = null,
-    contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
-    interactionSource: MutableInteractionSource? = null,
-    content: @Composable RowScope.() -> Unit
-) {
-    Button().Composable(
-        onClick,
-        modifier,
-        enabled,
-        shape,
-        colors,
-        elevation,
-        border,
-        contentPadding,
-        interactionSource,
-        content
-    )
-}
-```
-
 We also need to be able to provide a child of `Button` with customized behaviour (overridden methods or properties)
 
 ```Kotlin
@@ -198,7 +167,7 @@ class CustomButton : Button() {
 }
 ```
 
-We can use CompositionLocal
+For that we use CompositionLocal
 
 ```Kotlin
 @Composable
