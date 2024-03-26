@@ -6,6 +6,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
@@ -13,8 +14,11 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.runtime.Composable
@@ -54,6 +58,42 @@ import com.yveskalume.openmaterial.tokens.NavigationBarTokens
 import com.yveskalume.openmaterial.value
 import kotlin.math.roundToInt
 
+/**
+ * Material Design navigation bar item.
+ *
+ * Navigation bars offer a persistent and convenient way to switch between primary destinations in
+ * an app.
+ *
+ * The recommended configuration for a [NavigationBarItem] depends on how many items there are
+ * inside a [NavigationBar]:
+ *
+ * - Three destinations: Display icons and text labels for all destinations.
+ * - Four destinations: Active destinations display an icon and text label. Inactive destinations
+ * display icons, and text labels are recommended.
+ * - Five destinations: Active destinations display an icon and text label. Inactive destinations
+ * use icons, and use text labels if space permits.
+ *
+ * A [NavigationBarItem] always shows text labels (if it exists) when selected. Showing text
+ * labels if not selected is controlled by [alwaysShowLabel].
+ *
+ * @param selected whether this item is selected
+ * @param onClick called when this item is clicked
+ * @param icon icon for this item, typically an [Icon]
+ * @param modifier the [Modifier] to be applied to this item
+ * @param enabled controls the enabled state of this item. When `false`, this component will not
+ * respond to user input, and it will appear visually disabled and disabled to accessibility
+ * services.
+ * @param label optional text label for this item
+ * @param alwaysShowLabel whether to always show the label for this item. If `false`, the label will
+ * only be shown when this item is selected.
+ * @param colors [NavigationBarItemColors] that will be used to resolve the colors used for this
+ * item in different states. See [NavigationBarItemDefaults.colors].
+ * @param interactionSource the [MutableInteractionSource] representing the stream of [Interaction]s
+ * for this item. You can create and pass in your own `remember`ed instance to observe
+ * [Interaction]s and customize the appearance / behavior of this item in different states.
+ *
+ * Cfr [androidx.compose.material3.NavigationBarItem]
+ */
 @Composable
 fun RowScope.NavigationBarItem(
     selected: Boolean,
@@ -81,31 +121,122 @@ fun RowScope.NavigationBarItem(
     }
 }
 
+/**
+ * [NavigationBarItem] represents a single item within a bottom navigation bar.
+ *
+ * It provides the logic, layout, and default values for navigation bar items.
+ * It can be customized through its properties and methods.
+ *
+ * This class is designed to be extended for custom implementations.
+ */
 open class NavigationBarItem {
 
+    /**
+     * The default height of the navigation bar in Dp.
+     * Derived from [NavigationBarTokens.ContainerHeight].
+     *
+     * Make sure it has the same value as [NavigationBar.navigationBarHeight]
+     */
     protected open val navigationBarHeight: Dp = NavigationBarTokens.ContainerHeight
 
-    protected open val indicatorRippleLayoutIdTag: String = "indicatorRipple"
-    protected open val indicatorLayoutIdTag: String = "indicator"
-    protected open val iconLayoutIdTag: String = "icon"
-    protected open val labelLayoutIdTag: String = "label"
-
+    /**
+     * The default width of the active indicator in Dp.
+     *
+     * Derived from [NavigationBarTokens.ActiveIndicatorWidth]
+     */
     protected open val activeIndicatorWidth: Dp = NavigationBarTokens.ActiveIndicatorWidth
+
+    /**
+     * The default height of the active indicator in Dp.
+     *
+     * Derived from [NavigationBarTokens.ActiveIndicatorHeight].
+     */
     protected open val activeIndicatorHeight: Dp = NavigationBarTokens.ActiveIndicatorHeight
+
+    /**
+     * The default horizontal padding for the item in Dp.
+     *
+     * Make sure it is has the same value as [NavigationBar.navigationBarItemHorizontalPadding]
+     */
     protected open val navigationBarItemHorizontalPadding: Dp = 8.dp
+
+    /**
+     * The default size of the icon in Dp.
+     *
+     * Derived from [NavigationBarTokens.IconSize].
+     */
     protected open val iconSize: Dp = NavigationBarTokens.IconSize
 
+    /**
+     * The calculated horizontal padding for the indicator, ensuring it's centered around the icon.
+     */
     protected open val indicatorHorizontalPadding: Dp
         get() = (this.activeIndicatorWidth - this.iconSize) / 2
 
+    /**
+     * The calculated vertical padding for the indicator, ensuring it's vertically aligned with the icon.
+     */
     protected open val indicatorVerticalPadding: Dp
         get() = (this.activeIndicatorHeight - iconSize) / 2
 
+    /**
+     * The default animation duration for item selection changes in milliseconds.
+     */
     protected open val itemAnimationDurationMillis: Int = 100
+
+    /**
+     * The default vertical offset of the indicator from the bottom of the item in Dp.
+     */
     protected open val indicatorVerticalOffset: Dp = 12.dp
 
+    /**
+     * The default padding between the indicator and the label in Dp.
+     */
     protected open val navigationBarIndicatorToLabelPadding: Dp = 4.dp
 
+    /**
+     * Layout ID tag for the indicator ripple element.
+     */
+    protected open val indicatorRippleLayoutIdTag: String = "indicatorRipple"
+
+    /**
+     * Layout ID tag for the indicator element.
+     */
+    protected open val indicatorLayoutIdTag: String = "indicator"
+
+    /**
+     * Layout ID tag for the icon element.
+     */
+    protected open val iconLayoutIdTag: String = "icon"
+
+    /**
+     * Layout ID tag for the label element.
+     */
+    protected open val labelLayoutIdTag: String = "label"
+
+
+    /**
+     * This is the NavigationBarItem Composable
+     * Has the same signature as the Material 3 [RowScope.NavigationBarItem] composable
+     *
+     * @param selected whether this item is selected
+     * @param onClick called when this item is clicked
+     * @param icon icon for this item, typically an [Icon]
+     * @param modifier the [Modifier] to be applied to this item
+     * @param enabled controls the enabled state of this item. When `false`, this component will not
+     * respond to user input, and it will appear visually disabled and disabled to accessibility
+     * services.
+     * @param label optional text label for this item
+     * @param alwaysShowLabel whether to always show the label for this item. If `false`, the label will
+     * only be shown when this item is selected.
+     * @param colors [NavigationBarItemColors] that will be used to resolve the colors used for this
+     * item in different states. See [NavigationBarItemDefaults.colors].
+     * @param interactionSource the [MutableInteractionSource] representing the stream of [Interaction]s
+     * for this item. You can create and pass in your own `remember`ed instance to observe
+     * [Interaction]s and customize the appearance / behavior of this item in different states.
+     *
+     * Cfr [androidx.compose.material3.NavigationBarItem]
+     */
 
     @Composable
     open fun RowScope.Composable(
@@ -191,6 +322,16 @@ open class NavigationBarItem {
 
     }
 
+    /**
+     * Responsible for styling the Navigation icon based on the provided parameters.
+     *
+     * @param colors A NavigationBarItemColors instance that provides theming colors for this item.
+     * @param selected Whether this item is currently selected.
+     * @param enabled Whether this item is interactable.
+     * @param label An optional composable function that defines the text label for this item.
+     * @param alwaysShowLabel Whether to always show the label regardless of selection state.
+     * @param icon A composable function that defines the icon for this item.
+     */
     @SuppressLint("ComposableNaming")
     @Composable
     protected open fun styledIcon(
@@ -210,6 +351,14 @@ open class NavigationBarItem {
     }
 
 
+    /**
+     * Responsible for styling the label based on the provided parameters.
+     *
+     * @param colors A NavigationBarItemColors instance that provides theming colors for this item.
+     * @param selected Whether this item is currently selected.
+     * @param enabled Whether this item is interactable.
+     * @param label A composable function that defines the text label for this item.
+     */
     @Composable
     protected open fun styledLabel(
         colors: NavigationBarItemColors,
@@ -226,6 +375,14 @@ open class NavigationBarItem {
         )
     }
 
+    /**
+     * Creates the visual indicator for the selected item in the navigation bar.
+     *
+     * @param animationProgress A Float value between 0 and 1 representing the animation progress of the selection change.
+     * @param colors A NavigationBarItemColors instance that provides theming colors for this item.
+     *
+     * Don't forget to provide the layoutId which is [indicatorLayoutIdTag]
+     */
     @SuppressLint("ComposableNaming")
     @Composable
     protected open fun indicator(
@@ -243,6 +400,13 @@ open class NavigationBarItem {
         )
     }
 
+    /**
+     * Creates the ripple effect for the indicator when the navigation bar item is interacted with.
+     *
+     * @param offsetInteractionSource A MappedInteractionSource object used to adjust the ripple location based on other elements.
+     *
+     * Don't forget to provide the layoutId which is [indicatorRippleLayoutIdTag]
+     */
     @SuppressLint("ComposableNaming")
     @Composable
     protected open fun indicatorRipple(offsetInteractionSource: MappedInteractionSource) {
@@ -258,6 +422,19 @@ open class NavigationBarItem {
     }
 
 
+    /**
+     * Base layout for a [NavigationBarItem].
+     *
+     * @param indicatorRipple indicator ripple for this item when it is selected
+     * @param indicator indicator for this item when it is selected
+     * @param icon icon for this item
+     * @param label text label for this item
+     * @param alwaysShowLabel whether to always show the label for this item. If false, the label will
+     * only be shown when this item is selected.
+     * @param animationProgress progress of the animation, where 0 represents the unselected state of
+     * this item and 1 represents the selected state. This value controls other values such as indicator
+     * size, icon and label positions, etc.
+     */
     @Composable
     private fun NavigationBarItemLayout(
         indicatorRipple: @Composable () -> Unit,
@@ -336,6 +513,8 @@ open class NavigationBarItem {
 
     /**
      * Places the provided [Placeable]s in the center of the provided [constraints].
+     *
+     * Cfr [androidx.compose.material3.placeIcon]
      */
     private fun MeasureScope.placeIcon(
         iconPlaceable: Placeable,
@@ -394,6 +573,8 @@ open class NavigationBarItem {
      * @param animationProgress progress of the animation, where 0 represents the unselected state of
      * this item and 1 represents the selected state. Values between 0 and 1 interpolate positions of
      * the icon and label.
+     *
+     * Cfr [androidx.compose.material3.placeLabelAndIcon]
      */
     private fun MeasureScope.placeLabelAndIcon(
         labelPlaceable: Placeable,
@@ -459,6 +640,8 @@ open class NavigationBarItem {
  *
  * @param selected whether the item is selected
  * @param enabled whether the item is enabled
+ *
+ * Cfr [androidx.compose.material3.NavigationBarItemColors.iconColor]
  */
 @Composable
 internal fun NavigationBarItemColors.iconColor(
@@ -477,6 +660,14 @@ internal fun NavigationBarItemColors.iconColor(
     )
 }
 
+/**
+ * Represents the text color for this item, depending on whether it is [selected].
+ *
+ * @param selected whether the item is selected
+ * @param enabled whether the item is enabled
+ *
+ * Cfr [androidx.compose.material3.NavigationBarItemColors.textColor]
+ */
 @Composable
 internal fun NavigationBarItemColors.textColor(
     selected: Boolean,
@@ -494,5 +685,8 @@ internal fun NavigationBarItemColors.textColor(
     )
 }
 
+/**
+ * Create a compositionLocal of [NavigationBarItem] and can be used to provide its other custom implementations to the composition
+ */
 val RowScope.LocalOpenMaterialNavigationBarItem: ProvidableCompositionLocal<NavigationBarItem>
     get() = compositionLocalOf { NavigationBarItem() }
